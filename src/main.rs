@@ -1,33 +1,69 @@
 use colored::{ColoredString, Colorize};
-use sysinfo::{System, SystemExt};
+use sysinfo::{System, SystemExt, UserExt};
+
+fn longest_str(vec: &Vec<ColoredString>) -> usize {
+    let mut len = 0;
+
+    for line in vec.iter() {
+        if line.len() > len {
+            len = line.len();
+        }
+    }
+
+    len
+}
 
 fn main() {
+    // Eventually change this to just the things we need, and not everything
     let mut sys = System::new_all();
 
     sys.refresh_all();
 
     let ascii_art = get_ascii_art();
+    let width = longest_str(&ascii_art) + 5;
 
-    println!();
+    print!("\n");
 
-    println!("{:<40}{}", ascii_art[0], sys.host_name().unwrap());
+    let name = format!(
+        "{}@{}",
+        sys.users().get(2).unwrap().name().green().bold(),
+        sys.host_name().unwrap().green().bold()
+    );
+
+    println!("{:<width$}{}", ascii_art[0], name);
+
+    println!("{:<width$}{}", ascii_art[1], "-".repeat(name.len()));
+
     println!(
-        "{:<35}OS:    {:>6}",
-        ascii_art[1],
+        "{:<width$}{:<10}{:>10}",
+        ascii_art[2],
+        "OS:".yellow().bold(),
         sys.long_os_version().unwrap()
     );
 
-    for i in 2..ascii_art.len() {
-        println!("{:<35}TMP:    {:>6}", ascii_art[i], "temp");
+    println!(
+        "{:<width$}{:<10}{:>10}",
+        ascii_art[3],
+        "Kernel:".yellow().bold(),
+        sys.kernel_version().unwrap()
+    );
+
+    for i in 4..ascii_art.len() {
+        println!(
+            "{:<width$}{:<10}{:>10}",
+            ascii_art[i],
+            "TODO:".yellow().bold(),
+            "TODO"
+        );
     }
 
-    println!();
+    print!("\n\n");
 }
 
-// Append output to each line of this
 #[cfg(target_os = "macos")]
 fn get_ascii_art() -> Vec<ColoredString> {
     vec![
+        "                    'c.".green(),
         "                 ,MMMM.".green(),
         "               .MMMMMM".green(),
         "               MMMMM,".green(),

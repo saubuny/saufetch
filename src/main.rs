@@ -7,17 +7,20 @@ mod ascii_art;
 
 #[derive(Parser, Debug)]
 struct Cli {
+    #[arg(default_value_t = String::from(""))]
     ascii_art_name: String,
 }
 
 fn main() {
-    let args = Cli::parse();
-    println!("{:?}", args);
+    let _args = Cli::parse();
 
     // Eventually change this to just the things we need, and not everything
     let mut sys = System::new_all();
 
     sys.refresh_all();
+
+    // All art should be 16 lines long
+    let _ascii_art_len = 16;
 
     let ascii_art = get_ascii_art();
     let width = longest_str(&ascii_art) + 5;

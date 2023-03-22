@@ -1,7 +1,5 @@
 use colored::{ColoredString, Colorize};
-use std::collections::HashMap;
 
-// Update this to be able to choose based on cli input
 #[cfg(target_os = "macos")]
 pub fn get_ascii_art() -> Vec<ColoredString> {
     vec![

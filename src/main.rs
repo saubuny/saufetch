@@ -1,18 +1,18 @@
-use ascii_art::{get_ascii_art, longest_str};
+use ascii_art::{get_ascii_art, longest_str, AsciiArtSize};
 use clap::Parser;
 use colored::Colorize;
 use sysinfo::{System, SystemExt, UserExt};
 
-mod ascii_art;
+pub mod ascii_art;
 
 #[derive(Parser, Debug)]
 struct Cli {
-    #[arg(default_value_t = String::from(""))]
-    ascii_art_name: String,
+    #[arg(value_enum)]
+    ascii_art_size: AsciiArtSize,
 }
 
-fn main() {
-    let _args = Cli::parse();
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let args = Cli::parse();
 
     // Eventually change this to just the things we need, and not everything
     let mut sys = System::new_all();
@@ -20,9 +20,7 @@ fn main() {
     sys.refresh_all();
 
     // All art should be 16 lines long
-    let _ascii_art_len = 16;
-
-    let ascii_art = get_ascii_art();
+    let ascii_art = get_ascii_art(args.ascii_art_size);
     let width = longest_str(&ascii_art) + 5;
 
     println!();
@@ -62,4 +60,6 @@ fn main() {
 
     println!();
     println!();
+
+    Ok(())
 }

@@ -1,9 +1,13 @@
 use ascii_art::{get_ascii_art, longest_str, AsciiArtSize};
 use clap::Parser;
 use colored::Colorize;
+use libmacchina::traits::GeneralReadout as _;
+use libmacchina::GeneralReadout;
 use sysinfo::{CpuExt, System, SystemExt, UserExt};
 
 pub mod ascii_art;
+
+// big TODO: Switch to Libmacchina
 
 // TODO: Have less info shown with small option
 #[derive(Parser, Debug)]
@@ -15,10 +19,10 @@ struct Cli {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cli::parse();
 
-    // TODO: Change this to just the things we need, and not everything
     let mut sys = System::new_all();
-
     sys.refresh_all();
+
+    let general_readout = GeneralReadout::new();
 
     // NOTE: All large art should be 16 lines long
     let ascii_art = get_ascii_art(args.ascii_art_size);
@@ -44,36 +48,43 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "{:<width$}{} {}",
         ascii_art[2],
         "OS:".yellow().bold(),
-        sys.long_os_version().unwrap()
+        general_readout.os_name().unwrap()
     );
 
     println!(
         "{:<width$}{} {}",
         ascii_art[3],
-        "Kernel:".yellow().bold(),
-        sys.kernel_version().unwrap()
+        "Uptime:".yellow().bold(),
+        general_readout.uptime().unwrap()
     );
 
     println!(
         "{:<width$}{} {}",
         ascii_art[4],
-        "Uptime:".yellow().bold(),
-        sys.uptime()
+        "Terminal:".yellow().bold(),
+        general_readout.terminal().unwrap()
     );
 
     println!(
         "{:<width$}{} {}",
         ascii_art[5],
-        "CPU:".yellow().bold(),
-        sys.global_cpu_info().brand()
+        "Resolution:".yellow().bold(),
+        general_readout.resolution().unwrap()
     );
 
-    for i in 6..ascii_art.len() {
+    println!(
+        "{:<width$}{} {}",
+        ascii_art[6],
+        "DE:".yellow().bold(),
+        general_readout.desktop_environment().unwrap()
+    );
+
+    for item in ascii_art.iter().skip(7) {
         println!(
             "{:<width$}{} {}",
-            ascii_art[i],
-            "TODO:".yellow().bold(),
-            "TODO"
+            item,
+            "CPU:".yellow().bold(),
+            general_readout.cpu_model_name().unwrap()
         );
     }
 

@@ -56,7 +56,7 @@ pub fn get_ascii_art(size: AsciiArtSize) -> Vec<&'static str> {
     vec!["skill issue"]
 }
 
-pub fn longest_str(vec: &Vec<ColoredString>) -> usize {
+pub fn longest_str(vec: &[ColoredString]) -> usize {
     let mut len = 0;
 
     for line in vec.iter() {

@@ -1,14 +1,14 @@
 use ascii_art::{get_ascii_art, longest_str, AsciiArtSize};
 use clap::Parser;
 use colored::Colorize;
-use sysinfo::{System, SystemExt, UserExt};
+use sysinfo::{CpuExt, System, SystemExt, UserExt};
 
 pub mod ascii_art;
 
 // TODO: Have less info shown with small option
 #[derive(Parser, Debug)]
 struct Cli {
-    #[arg(value_enum)]
+    #[arg(value_enum, default_value_t = AsciiArtSize::Large)]
     ascii_art_size: AsciiArtSize,
 }
 
@@ -41,22 +41,36 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     println!(
-        "{:<width$}{:<10}{:>10}",
+        "{:<width$}{} {}",
         ascii_art[2],
         "OS:".yellow().bold(),
         sys.long_os_version().unwrap()
     );
 
     println!(
-        "{:<width$}{:<10}{:>10}",
+        "{:<width$}{} {}",
         ascii_art[3],
         "Kernel:".yellow().bold(),
         sys.kernel_version().unwrap()
     );
 
-    for i in 4..ascii_art.len() {
+    println!(
+        "{:<width$}{} {}",
+        ascii_art[4],
+        "Uptime:".yellow().bold(),
+        sys.uptime()
+    );
+
+    println!(
+        "{:<width$}{} {}",
+        ascii_art[5],
+        "CPU:".yellow().bold(),
+        sys.global_cpu_info().brand()
+    );
+
+    for i in 6..ascii_art.len() {
         println!(
-            "{:<width$}{:<10}{:>10}",
+            "{:<width$}{} {}",
             ascii_art[i],
             "TODO:".yellow().bold(),
             "TODO"
